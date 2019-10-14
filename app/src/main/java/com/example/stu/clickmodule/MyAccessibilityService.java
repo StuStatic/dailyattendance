@@ -31,15 +31,15 @@ public class MyAccessibilityService extends AccessibilityService {
 
     public static MyAccessibilityService mService;
 
-    private boolean canClick = true;
-
-    private int countView = 0;
-
-    private List<AccessibilityNodeInfo> viewList = new ArrayList<>();//该页面所有view对应的nodeInfo对象的集合
-
-    private boolean canListAddFlag = true; //因为getChild会重走，所以以textview="北京葡萄智学科技有限公司'为标识
-
-    private int name = 0;//计算title出现的次数
+//    private boolean canClick = true;
+//
+//    private int countView = 0;
+//
+//    private List<AccessibilityNodeInfo> viewList = new ArrayList<>();//该页面所有view对应的nodeInfo对象的集合
+//
+//    private boolean canListAddFlag = true; //因为getChild会重走，所以以textview="北京葡萄智学科技有限公司'为标识
+//
+//    private int name = 0;//计算title出现的次数
 
 
     @Override
@@ -65,35 +65,39 @@ public class MyAccessibilityService extends AccessibilityService {
     }
 
     private void performClick(AccessibilityNodeInfo targetInfo) {
-        canClick = false;
+        MainActivity.canClick = false;
         targetInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+        MainActivity.countView = 0;
+        Log.e("stu_s", String.valueOf(MainActivity.viewList.size()));
+        MainActivity.viewList.clear();
+        MainActivity.canListAddFlag = true;
+        MainActivity.name = 0;
     }
 
     private void getChild(AccessibilityNodeInfo rootInfo) {
-        Log.e("stu_getChild","stu_getChild");
-        if (canClick) {
+        if (MainActivity.canClick) {
 
             if (rootInfo.getChildCount() == 0) {
                 Log.e("stu_0", String.valueOf(rootInfo.getClassName()));
 //            Log.e("stu_1", rootInfo.getViewIdResourceName());
 //            Log.e("stu_2", String.valueOf(rootInfo.getChildCount()));
-//                Log.e("stu_3", String.valueOf(rootInfo.getText()));
+                Log.e("stu_3", String.valueOf(rootInfo.getText()));
 //            Log.e("stu_4", String.valueOf(rootInfo.getChild(0).getText()));//此句不能用。用就崩
 //            AccessibilityNodeInfo childInfo = rootInfo.getChild(0);
 //            String text = childInfo.getText().toString();
 
                 if (String.valueOf(rootInfo.getText()).equals("北京葡萄智学科技有限公司")) {
-                    name++;
-                    if (name == 2) {
-                        name = 0;
-                        canListAddFlag = false;
+                    MainActivity.name++;
+                    if (MainActivity.name == 2) {
+                        MainActivity.name = 0;
+                        MainActivity.canListAddFlag = false;
                     }
                 }
 
                 if (String.valueOf(rootInfo.getClassName()).equals("android.view.View")) {
-                    countView++;
-                    if (canListAddFlag) {
-                        viewList.add(rootInfo);
+                    MainActivity.countView++;
+                    if (MainActivity.canListAddFlag) {
+                        MainActivity.viewList.add(rootInfo);
                     }
 
                     new Thread(new Runnable() {
@@ -101,9 +105,9 @@ public class MyAccessibilityService extends AccessibilityService {
                         public void run() {
                             try {
                                 Thread.sleep(3000);
-                                for (int i = 0; i < viewList.size(); i++) {
-                                    if (i == viewList.size() - 6) {
-                                        performClick(viewList.get(i-1));
+                                for (int i = 0; i < MainActivity.viewList.size(); i++) {
+                                    if (i == MainActivity.viewList.size() - 6) {
+                                        performClick(MainActivity.viewList.get(i-1));
                                     }
                                 }
                             } catch (InterruptedException e) {
@@ -126,15 +130,6 @@ public class MyAccessibilityService extends AccessibilityService {
                 }
             }
         }
-    }
-
-    private void resetData(){
-        countView = 0;
-        Log.e("stu_s", String.valueOf(viewList.size()));
-        viewList.clear();
-        canListAddFlag = true;
-        name = 0;
-        canClick = true;
     }
 
 }

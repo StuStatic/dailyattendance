@@ -41,15 +41,15 @@ public class MainActivity extends AppCompatActivity {
     private static Context context;
     private static final String tag = "bright:";
     //accessbilityservice全局
-//    public static boolean canClick = true;
-//
-//    public static int countView = 0;
-//
-//    public static List<AccessibilityNodeInfo> viewList = new ArrayList<>();//该页面所有view对应的nodeInfo对象的集合
-//
-//    public static boolean canListAddFlag = true; //因为getChild会重走，所以以textview="北京葡萄智学科技有限公司'为标识
-//
-//    public static int name = 0;//计算title出现的次数
+    public static boolean canClick = true;
+
+    public static int countView = 0;
+
+    public static List<AccessibilityNodeInfo> viewList = new ArrayList<>();//该页面所有view对应的nodeInfo对象的集合
+
+    public static boolean canListAddFlag = true; //因为getChild会重走，所以以textview="北京葡萄智学科技有限公司'为标识
+
+    public static int name = 0;//计算title出现的次数
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

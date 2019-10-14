@@ -41,7 +41,7 @@ import static android.content.Context.KEYGUARD_SERVICE;
  * 2) 接收不到自定义消息
  */
 public class MyReceiver extends BroadcastReceiver {
-    private static final String TAG = "JIGUANG-Example";
+    private static final String TAG = "stu-Example";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -134,6 +134,8 @@ public class MyReceiver extends BroadcastReceiver {
                     doSthInteresting(context, "tap", false);
                 }else if(bundle.get(key).equals("dingding")){
                     doSthInteresting(context,"dingding",false);
+                }else if(bundle.get(key).equals("reset")){
+                    doSthInteresting(context,"reset",false);
                 }
             }
         }
@@ -248,6 +250,13 @@ public class MyReceiver extends BroadcastReceiver {
             PackageManager packageManager = context.getPackageManager();
             Intent intent = packageManager.getLaunchIntentForPackage("com.alibaba.android.rimet");
             context.startActivity(intent);
+        }else if(type.equals("reset")){
+            Log.e("stu_reset","stu_reset");
+            MainActivity.canClick = true;
+            MainActivity.countView = 0;
+            MainActivity.viewList.clear();
+            MainActivity.canListAddFlag = true;
+            MainActivity.name = 0;
         }
 
     }
