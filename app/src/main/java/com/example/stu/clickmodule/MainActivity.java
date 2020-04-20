@@ -1,5 +1,6 @@
 package com.example.stu.clickmodule;
 
+import android.annotation.SuppressLint;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.os.Bundle;
@@ -51,6 +52,10 @@ public class MainActivity extends AppCompatActivity {
 
     public static int name = 0;//计算title出现的次数
 
+    public static boolean clickDiaog = false;
+
+    public static List<AccessibilityNodeInfo> btnList = new ArrayList<>();//点击上下班按钮后出现的btn集合
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,10 +81,14 @@ public class MainActivity extends AppCompatActivity {
         if (getIntent().getBooleanExtra("finish", false)) {
             finishActivity();
         }
+
+        if(getIntent().getBooleanExtra("unlockScreen",true)){
+            unlockScreen();
+        }
     }
 
     public void finishActivity() {
-        new Handler().postDelayed(new Runnable(){
+        new Handler().postDelayed(new Runnable() {
             public void run() {
                 //execute the task
                 finish();
@@ -129,8 +138,7 @@ public class MainActivity extends AppCompatActivity {
         // 屏幕锁定
 //        keyguardLock.reenableKeyguard();
         keyguardLock.disableKeyguard(); // 解锁
-
-        final Window win = getWindow();
+        Window win = getWindow();
         win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
 
@@ -138,4 +146,25 @@ public class MainActivity extends AppCompatActivity {
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
                 | WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON);
     }
+
+    public static void unlockScreen() {
+
+        // 获取电源管理器对象
+        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        boolean screenOn = false;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT_WATCH) {
+            screenOn = pm.isInteractive();
+        }
+        if (!screenOn) { // ScreenOn是LogCat里用的Tag
+            @SuppressLint("InvalidWakeLockTag") PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "ScreenOn");
+            wl.acquire(1000); // 点亮屏幕 wl.release(); // 释放
+        }
+        // 屏幕解锁
+        KeyguardManager keyguardManager = (KeyguardManager) context.getSystemService(KEYGUARD_SERVICE);
+        KeyguardManager.KeyguardLock keyguardLock = keyguardManager.newKeyguardLock("unLock");
+        // 屏幕锁定
+        keyguardLock.reenableKeyguard();
+        keyguardLock.disableKeyguard(); // 解锁
+    }
+
 }
